@@ -3,7 +3,11 @@
 set -e
 
 # Install Apache & PHP5
-aptitude -y install apache2 php5 php5-mysql libapache2-mod-php5 php5-curl
+aptitude -y install apache2 php5 php5-mysql libapache-mod-ssl libapache2-mod-php5 php5-curl
+
+# Set up self-signed SSL certificate
+mkdir /etc/apache2/ssl
+openssl req -new -x509 -days 365 -nodes -out /etc/apache2/ssl/apache.pem -keyout /etc/apache2/ssl/apache.key
 
 # Set Hostname
 read -p "What hostname would you like to use? " my_hostname
