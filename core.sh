@@ -21,6 +21,7 @@ read -p "What SSH port would you like to use? " my_ssh_port
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.`date +%s`.bak
 sed -i"-orig" "s/Port [0-9]\+/Port $my_ssh_port/" /etc/ssh/sshd_config
 sed -i"-orig" "s/LoginGraceTime [0-9]\+/LoginGraceTime 30/" /etc/ssh/sshd_config
+sed -i"-orig" "s/Subsystem sftp \/usr\/lib\/openssh\/sftp\-server/# Subsystem sftp \/usr\/lib\/openssh\/sftp-server/" /etc/ssh/sshd_config
 cat >> /etc/ssh/sshd_config << EOF
 
 Subsystem sftp internal-sftp
@@ -31,6 +32,9 @@ Match group filetransfer
   AllowTcpForwarding no
   ForceCommand internal-sftp
 EOF
+
+# Restart SSH
+service ssh restart
 
 # Install Firewall
 $MY_DIR/firewall.sh $my_ssh_port
