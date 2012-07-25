@@ -18,7 +18,7 @@ addgroup filetransfer
 # Config SSH
 read -p "What SSH port would you like to use? " my_ssh_port
 
-cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.`date +%s`.backup
 sed -i'-orig' 's/Port [0-9]\+/Port $my_ssh_port/' /etc/ssh/sshd_config
 sed -i'-orig' 's/LoginGraceTime [0-9]\+/LoginGraceTime 30/' /etc/ssh/sshd_config
 cat > /etc/ssh/sshd_config << EOF
