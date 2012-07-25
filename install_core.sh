@@ -2,7 +2,7 @@
 
 set -e
 
-MY_DIR="$( cd "$( dirname "$0" )" && pwd )"
+MY_PATH="$( cd "$( dirname "$0" )" && pwd )"
 
 echo
 echo Updating system...
@@ -11,13 +11,10 @@ echo
 apt-get update
 apt-get install aptitude
 aptitude -y full-upgrade
-aptitude -y install wget vim less
-
-# Install Git
-aptitude -y install git-core
+aptitude -y install git-core wget vim less
 
 echo
-echo Add filetransfer group...
+echo Add SFTP filetransfer group...
 echo
 
 addgroup filetransfer
@@ -26,10 +23,10 @@ echo
 echo Configure SSH
 echo
 
-read -p "What SSH port would you like to use? " my_ssh_port
+read -p "What SSH port would you like to use? " MY_SSH_PORT
 
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.`date +%s`.bak
-sed -i"-orig" "s/Port [0-9]\+/Port $my_ssh_port/" /etc/ssh/sshd_config
+sed -i"-orig" "s/Port [0-9]\+/Port $MY_SSH_PORT/" /etc/ssh/sshd_config
 sed -i"-orig" "s/LoginGraceTime [0-9]\+/LoginGraceTime 30/" /etc/ssh/sshd_config
 sed -i"-orig" "s/Subsystem sftp \/usr\/lib\/openssh\/sftp\-server/# Subsystem sftp \/usr\/lib\/openssh\/sftp-server/" /etc/ssh/sshd_config
 cat >> /etc/ssh/sshd_config << EOF
@@ -49,21 +46,17 @@ echo
 echo Install IPTables firewall...
 echo
 
-$MY_DIR/firewall.sh $my_ssh_port
+$MY_PATH/firewall.sh $MY_SSH_PORT
 
 echo
-echo Install Bash Aliases and Plissken...
+echo Install Bash Aliases...
 echo
 
 cp ~/.bashrc ~/.bashrc.`date +%s`.bak
 cat >> ~/.bashrc << EOF
 
-if [ -f $MY_DIR/bashrc.sh ]; then
-  source $MY_DIR/bashrc.sh
-fi
-
-if [ -f $MY_DIR/plissken.sh ]; then
-  source $MY_DIR/plissken.sh
+if [ -f $MY_PATH/bashrc.sh ]; then
+  source $MY_PATH/bashrc.sh
 fi
 
 EOF

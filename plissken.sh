@@ -10,10 +10,10 @@ function create_mysql_user {
 function create_sftp_user {
     [ $# -lt 2 ] && { echo "Usage: create_sftp_user username domain"; return; }
 
-    useradd -d /srv/www/$2 $1
+    useradd -d $VHOST_PATH/www/$2 $1
     passwd $1
     usermod -G filetransfer $1
-    chown -R $1:$1 /srv/www/$2/*
+    chown -R $1:$1 $VHOST_PATH/www/$2/*
 }
 
 function create_apache_virtualhost {
@@ -24,15 +24,15 @@ function create_apache_virtualhost {
         return;
     fi
 
-    mkdir -p /srv/www/$1/pub
+    mkdir -p $VHOST_PATH/www/$1/pub
 
     cat > /etc/apache2/sites-available/$1 << EOF
 <VirtualHost *:80>
     ServerName $1
     ServerAlias www.$1
-    DocumentRoot /srv/www/$1/pub
-    ErrorLog /srv/logs/all.error.log
-    CustomLog /srv/logs/all.access.log vhost_combined
+    DocumentRoot $VHOST_PATH/www/$1/pub
+    ErrorLog $VHOST_PATH/logs/all.error.log
+    CustomLog $VHOST_PATH/logs/all.access.log vhost_combined
 </VirtualHost>
 <VirtualHost *:443>
     SSLEngine On
@@ -41,9 +41,9 @@ function create_apache_virtualhost {
     ServerAdmin admin@$1
     ServerName $1
     ServerAlias www.$1
-    DocumentRoot /srv/www/$1/pub
-    ErrorLog /srv/logs/secure.error.log
-    CustomLog /srv/logs/secure.access.log vhost_combined
+    DocumentRoot $VHOST_PATH/www/$1/pub
+    ErrorLog $VHOST_PATH/logs/secure.error.log
+    CustomLog $VHOST_PATH/logs/secure.access.log vhost_combined
 </VirtualHost>
 EOF
 
@@ -67,18 +67,18 @@ function create_apache_subdomain {
         return;
     fi
 
-    local DOMAINOWNER=`ls -l /srv/www/$2 | grep pub | awk '{print $3}'`
+    local DOMAINOWNER=`ls -l $VHOST_PATH/www/$2 | grep pub | awk '{print $3}'`
 
-    mkdir -p /srv/www/$2/subdomains/$1/pub
+    mkdir -p $VHOST_PATH/www/$2/subdomains/$1/pub
 
-    chown $DOMAINOWNER:$DOMAINOWNER /srv/www/$2/subdomains /srv/www/$2/subdomains/$1 /srv/www/$2/subdomains/$1/pub
+    chown $DOMAINOWNER:$DOMAINOWNER $VHOST_PATH/www/$2/subdomains $VHOST_PATH/www/$2/subdomains/$1 $VHOST_PATH/www/$2/subdomains/$1/pub
 
     cat > /etc/apache2/sites-available/$1.$2 << EOF
 <VirtualHost *:80>
     ServerName $1.$2
-    DocumentRoot /srv/www/$2/subdomains/$1/pub
-    ErrorLog /srv/logs/all.error.log
-    CustomLog /srv/logs/all.access.log vhost_combined
+    DocumentRoot $VHOST_PATH/www/$2/subdomains/$1/pub
+    ErrorLog $VHOST_PATH/logs/all.error.log
+    CustomLog $VHOST_PATH/logs/all.access.log vhost_combined
 </VirtualHost>
 <VirtualHost *:443>
     SSLEngine On
@@ -86,9 +86,9 @@ function create_apache_subdomain {
     SSLCertificateKeyFile /etc/apache2/ssl/apache.key
     ServerAdmin admin@$1
     ServerName $1.$2
-    DocumentRoot /srv/www/$2/subdomains/$1/pub
-    ErrorLog /srv/logs/secure.error.log
-    CustomLog /srv/logs/secure.access.log vhost_combined
+    DocumentRoot $VHOST_PATH/www/$2/subdomains/$1/pub
+    ErrorLog $VHOST_PATH/logs/secure.error.log
+    CustomLog $VHOST_PATH/logs/secure.access.log vhost_combined
 </VirtualHost>
 EOF
 
@@ -109,7 +109,7 @@ function delete_virtualhost {
     /etc/init.d/apache2 reload
 
     rm -f /etc/apache2/sites-available/$1
-    rm -rf /srv/www/$1
+    rm -rf $VHOST_PATH/www/$1
 
 }
 
@@ -125,7 +125,7 @@ function delete_subdomain {
     /etc/init.d/apache2 reload
 
     rm -f /etc/apache2/sites-available/$1.$2
-    rm -rf /srv/www/$2/subdomains/$1
+    rm -rf $VHOST_PATH/www/$2/subdomains/$1
 
 }
 
@@ -134,14 +134,14 @@ function password_protect {
 
     cat > $1/.htaccess << EOF
 AuthType Basic
-AuthUserFile /srv/auth/.htpasswd
+AuthUserFile $VHOST_PATH/auth/.htpasswd
 AuthName "Authorized Access Only"
 Require valid-user
 EOF
 
-    if [ -e "/srv/auth/.htpasswd" ];
-        then htpasswd -s /srv/auth/.htpasswd $2
-        else htpasswd -cs /srv/auth/.htpasswd $2
+    if [ -e "$VHOST_PATH/auth/.htpasswd" ];
+        then htpasswd -s $VHOST_PATH/auth/.htpasswd $2
+        else htpasswd -cs $VHOST_PATH/auth/.htpasswd $2
     fi
 
 }
