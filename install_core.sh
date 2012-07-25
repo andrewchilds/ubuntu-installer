@@ -4,6 +4,10 @@ set -e
 
 MY_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
+echo
+echo Updating system...
+echo
+
 apt-get update
 apt-get install aptitude
 aptitude -y full-upgrade
@@ -12,10 +16,16 @@ aptitude -y install wget vim less
 # Install Git
 aptitude -y install git-core
 
-# Add SFTP group
+echo
+echo Add filetransfer group...
+echo
+
 addgroup filetransfer
 
-# Config SSH
+echo
+echo Configure SSH
+echo
+
 read -p "What SSH port would you like to use? " my_ssh_port
 
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.`date +%s`.bak
@@ -33,13 +43,18 @@ Match group filetransfer
   ForceCommand internal-sftp
 EOF
 
-# Restart SSH
 service ssh restart
 
-# Install Firewall
+echo
+echo Install IPTables firewall...
+echo
+
 $MY_DIR/firewall.sh $my_ssh_port
 
-# Install Bash Aliases and Functions
+echo
+echo Install Bash Aliases and Plissken...
+echo
+
 cp ~/.bashrc ~/.bashrc.`date +%s`.bak
 cat >> ~/.bashrc << EOF
 
@@ -52,4 +67,8 @@ if [ -f $MY_DIR/plissken.sh ]; then
 fi
 
 EOF
+
+echo
+echo Done! You can now run ./install_lamp.sh to continue setting up your LAMP environment.
+echo
 
