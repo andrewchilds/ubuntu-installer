@@ -18,10 +18,10 @@ addgroup filetransfer
 # Config SSH
 read -p "What SSH port would you like to use? " my_ssh_port
 
-cp /etc/ssh/sshd_config /etc/ssh/sshd_config.`date +%s`.backup
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.`date +%s`.bak
 sed -i'-orig' 's/Port [0-9]\+/Port $my_ssh_port/' /etc/ssh/sshd_config
 sed -i'-orig' 's/LoginGraceTime [0-9]\+/LoginGraceTime 30/' /etc/ssh/sshd_config
-cat > /etc/ssh/sshd_config << EOF
+cat >> /etc/ssh/sshd_config << EOF
 
 Subsystem sftp internal-sftp
 
@@ -36,7 +36,8 @@ EOF
 $MY_DIR/firewall.sh $my_ssh_port
 
 # Install Bash Aliases and Functions
-cat > ~/.bashrc << EOF
+cp ~/.bashrc ~/.bashrc.`date +%s`.bak
+cat >> ~/.bashrc << EOF
 
 if [ -f $MY_DIR/bashrc.sh ]; then
   source $MY_DIR/bashrc.sh
