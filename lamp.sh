@@ -5,6 +5,12 @@ set -e
 # Install Apache & PHP5
 aptitude -y install apache2 php5 php5-mysql libapache2-mod-php5 php5-curl
 
+# Set Hostname
+read -p "What hostname would you like to use? " my_hostname
+echo $my_hostname > /etc/hostname
+hostname -F /etc/hostname
+echo "ServerName $my_hostname" >> /etc/apache2/httpd.conf
+
 # Install MySQL
 sudo DEBIAN_FRONTEND=noninteractive aptitude -q -y install mysql-server libmysqld-dev
 
