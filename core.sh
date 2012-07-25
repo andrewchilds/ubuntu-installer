@@ -33,7 +33,7 @@ Match group filetransfer
 EOF
 
 # Install Firewall
-$MY_PATH/firewall.sh $my_ssh_port
+$MY_DIR/firewall.sh $my_ssh_port
 
 # Install Bash Aliases and Functions
 cat > ~/.bashrc << EOF
