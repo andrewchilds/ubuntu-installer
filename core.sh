@@ -6,6 +6,8 @@ MY_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 apt-get update
 apt-get install aptitude
+aptitude -y full-upgrade
+aptitude -y install wget vim less
 
 # Install Git
 aptitude -y install git-core
