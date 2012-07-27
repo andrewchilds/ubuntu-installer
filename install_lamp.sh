@@ -4,10 +4,10 @@ set -e
 
 MY_PATH="$( cd "$( dirname "$0" )" && pwd )"
 
-read -p "What path would you like to use for Apache virtualhosts? (For example, /srv or /var/www)" VHOST_PATH
+read -p "What path would you like to use for Apache virtualhosts? (For example, /srv or /var/www) " VHOST_PATH
 
 echo
-echo Install Apache & PHP5
+echo Install Apache and PHP5
 echo
 
 aptitude -y install apache2 php5 php5-mysql libapache-mod-ssl libapache2-mod-php5 php5-curl
