@@ -10,7 +10,7 @@ echo
 echo Install Apache and PHP5
 echo
 
-aptitude -y install apache2 php5 php5-mysql libapache-mod-ssl libapache2-mod-php5 php5-curl
+aptitude -y install apache2 php5 php5-mysql php5-gd libapache-mod-ssl libapache2-mod-php5 php5-curl
 
 echo
 echo Set up self-signed SSL certificate
