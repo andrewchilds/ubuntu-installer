@@ -45,6 +45,8 @@ echo PHP configuration
 echo
 
 sed -i'-orig' 's/memory_limit = [0-9]\+M/memory_limit = 128M/' /etc/php5/apache2/php.ini
+sed -i'-orig' 's/session.gc_maxlifetime = [0-9]\+/session.gc_maxlifetime = 7776000/' /etc/php5/apache2/php.ini
+sed -i'-orig' 's/session.cookie_lifetime = [0-9]\+/session.cookie_lifetime = 7776000/' /etc/php5/apache2/php.ini
 
 echo
 echo Apache configuration
